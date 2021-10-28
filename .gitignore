@@ -1,5 +1,4 @@
-data*
-data.json
+*.json
 geckodriver*
 
 # Byte-compiled / optimized / DLL files
