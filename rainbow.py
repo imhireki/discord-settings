@@ -42,16 +42,20 @@ def login(driver):
     email_element.send_keys(email)
     password_element.send_keys(password, Keys.ENTER)
 
-def rainbow_chain(driver, color, time):
+def rainbow_chain(driver, color, time, previous=None):
     color_element = driver.find_element(
         By.CSS_SELECTOR,
         f'#message-reactions-884107859179208714 > div:nth-child({color})'\
          ' > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)'
         )
+        
+    color_element.click()
 
-    color_element.click()
+    if previous:
+        previous.click()
+
     sleep(time)
-    color_element.click()
+    return color_element
 
 
 if __name__ == '__main__':
@@ -70,9 +74,12 @@ if __name__ == '__main__':
         
         # run the rainbow chain
         color_list = [color for color in range(1, 13)]
+        previous = None
+
         while True:
             for color in color_list:
-                rainbow_chain(driver, color, 3)
+                element = rainbow_chain(driver, color, 3, previous)
+                previous = element 
 
     except KeyboardInterrupt:
         pass
