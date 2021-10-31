@@ -3,16 +3,26 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium import webdriver
-import json
+from random import shuffle
 from time import sleep
+import json
 
 
 def setup_driver():
-    """ Setup the firefox webdriver """
+    """ Setup the firefox driver """
     driver_options = webdriver.FirefoxOptions()
     driver_options.headless = True
 
     return webdriver.Firefox(
+        options=driver_options
+        )
+
+def setup_chrome_driver():
+    """ Setup the chrome driver """
+    driver_options = webdriver.ChromeOptions()
+    driver_options.headless = True
+
+    return webdriver.Chrome(
         options=driver_options
         )
 
@@ -43,6 +53,7 @@ def login(driver):
     password_element.send_keys(password, Keys.ENTER)
 
 def rainbow_chain(driver, color, time, previous=None):
+    """ Perform a click on a given color """
     color_element = driver.find_element(
         By.CSS_SELECTOR,
         f'#message-reactions-884107859179208714 > div:nth-child({color})'\
@@ -50,33 +61,33 @@ def rainbow_chain(driver, color, time, previous=None):
         )
         
     color_element.click()
-
     if previous:
         previous.click()
-
     sleep(time)
     return color_element
 
 
 if __name__ == '__main__':
-    
-    driver = setup_driver()
+    driver = setup_chrome_driver()
+
     discord_channel = 'https://discord.com/channels/864252583584464956/'\
                       '883813770118447224'
 
     try:
         login(driver)
-        sleep(5) # timeout to mark the dc logs as "read"
+        sleep(10)
 
         # url to server / change-color channel 
         driver.get(discord_channel) 
-        sleep(5) # timeout to the channel loading
+        sleep(10)
         
-        # run the rainbow chain
-        color_list = [color for color in range(1, 13)]
         previous = None
-
         while True:
+            # color_list = [color for color in range(1, 13)]       
+            # shuffle(color_list)
+            
+            color_list = [3, 12] 
+
             for color in color_list:
                 element = rainbow_chain(driver, color, 3, previous)
                 previous = element 
