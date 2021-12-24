@@ -5,7 +5,8 @@ from time import sleep
 
 
 class RainbowPuke:
-    def __init__(self, JWT, urls, timeouts):
+    """ Manage the change of the username color """
+    def __init__(self, JWT:str, urls:list, timeouts:dict):
         self.timeouts = timeouts
         self.urls = urls
         self.headers = JWT
@@ -16,11 +17,13 @@ class RainbowPuke:
 
     @headers.setter
     def headers(self, value):
+        """ Request's headers made out of the JWT token """
         self._headers = {'Content-Type': 'application/json',
                          'authorization': value,
                          'Content-Length': '0'}
 
     def perform_color_change(self):
+        """ Loop between the urls to change the username color """
         prev_url = None
 
         while True:
@@ -33,12 +36,14 @@ class RainbowPuke:
                 prev_url = url
 
     def add_color(self, url):
+        """ Perform a request(PUT) to add a color """
         requests.put(url,
                      headers=self.headers)
 
         sleep(self.timeouts['PUT']) # timeout pos PUT
 
     def rem_color(self, url):
+        """ Perform a request(DELETE) to remove a color """
         requests.delete(url,
                         headers=self.headers)
 
