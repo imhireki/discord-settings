@@ -22,19 +22,25 @@ class DiscordStatus:
         # Set iterators
         self.it_status_list = iter(status_list)
         self.it_emoji_list = iter(emoji_list)
+        self.it_text_list  = iter(text_list)
 
         while True:
+            data = {
+                "custom_status": {
+                    "emoji_name": self.get_next_emoji(emoji_list),
+                    "text": self.get_next_word(text_list)
+                },
+                "status": self.get_next_status(status_list)
+            }
 
-            # text as the main iterator
-            for text in text_list:
+            self.perform_request(data)
 
-                # set the self.data with all values
-                data = {"custom_status": {"emoji_name": self.get_next_emoji(emoji_list),
-                                          "text": text},
-                        "status": self.get_next_status(status_list)}
-
-                # perform the request using the self.data
-                self.perform_request(data)
+    def get_next_word(self, text_list):
+        try:
+            return self.it_text_list.__next__()
+        except StopIteration:
+            self.it_text_list = iter(text_list)
+            return self.it_text_list.__next__()
 
     def get_next_emoji(self, emoji_list):
         try:
@@ -57,10 +63,13 @@ class DiscordStatus:
         sleep(4)
 
 if __name__ == '__main__':
-    ds = DiscordStatus(JWT='')
+    JWT = ''
+    ds = DiscordStatus(JWT)
 
     to_emoji = ['🌕', '🌖', '🌗', '🌘', '🌑', '🌒', '🌓', '🌔']
-    to_text = [str(i) for i in range(10)]
+    to_text = [f'{i} hm' for i in range(100, 0, -1)]
+    #to_emoji = ['✨', '💫', '⭐️', '🌟']
+
     to_status = ['online', 'idle', 'dnd']
 
     ds.perform_action(text_list=to_text,

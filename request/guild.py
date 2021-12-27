@@ -1,7 +1,8 @@
-#! /usr/bin/python3
+#!/bin/python3
 
 import requests
 from time import sleep
+import random
 
 
 class RainbowPuke:
@@ -52,8 +53,18 @@ class RainbowPuke:
 
 if __name__ == '__main__':
     JWT = ''
-    urls = []
-    timeouts = {}
+
+    urls = [
+        'https://discord.com/api/v9/channels/793239305811263511/'\
+        'messages/793241061442977812/reactions/'\
+        f'{x}%EF%B8%8F%E2%83%A3/@me'
+        for x in range(9)
+    ]
+
+    random.shuffle(urls)
+
+    timeouts = {'PUT': 2,
+                'DELETE':2}
 
     rp = RainbowPuke(JWT, urls, timeouts)
     rp.perform_color_change()
