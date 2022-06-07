@@ -10,10 +10,9 @@ class DiscordSettingsAPI:
 
     ENDPOINT = 'https://discord.com/api/v9/users/@me/settings'
 
-    def __init__(self, JWT: str):
-        """Set the headers for the HTTP request's methods with the JWT."""
-        self.get_headers = headers.GetRequestHeaders(JWT).headers
-        self.patch_headers = headers.PatchRequestHeaders(JWT).headers
+    def __init__(self, auth_token: str):
+        self.get_headers = headers.GetRequestMethodHeaders(JWT).headers
+        self.patch_headers = headers.PatchRequestMethodHeaders(JWT).headers
 
     def get(self) -> Dict[str, Union[str, None]]:
         """Perform a GET request."""

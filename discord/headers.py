@@ -1,46 +1,61 @@
 from typing import Dict
+from abc import ABC, abstractmethod
 
 
-class IRequestHeaders:
-    """Interface for HTTP request's headers"""
+class IRequestHeader(ABC):
+    def __init__(self, header: str):
+        self.header: str = header
 
+    @property
+    @abstractmethod
+    def header_key(self) -> str: pass
+
+    @property
+    def header(self) -> Dict[str, str]:
+        return self._header
+
+    @header.setter
+    def header(self, header: str):
+        self._header = {self.header_key: header}
+
+
+class AuthorizationRequestHeader(IRequestHeader):
+    @property
+    def header_key(self) -> str:
+        return 'Authorization'
+
+
+class ContentTypeRequestHeader(IRequestHeader):
+    @property
+    def header_key(self) -> str:
+        return 'Content-Type'
+
+
+class IRequestMethodHeaders(ABC):
     _headers: Dict[str, str] = {}
 
+    def __init__(self, auth_token: str) -> None:
+        self.auth_token: str = auth_token
+        self.populate_headers()
+
     @property
-    def headers(self):
+    def headers(self) -> Dict[str, str]:
         return self._headers
 
-    @property
-    def authorization(self):
-        return self._authorization
-
-    @authorization.setter
-    def authorization(self, JWT: str):
-        self._authorization = {'Authorization': JWT}
-        self.headers.update(self.authorization)
+    @abstractmethod
+    def populate_headers(self) -> None: pass
 
 
-class PatchRequestHeaders(IRequestHeaders):
-    """Set the headers for PATCH requests."""
+class PatchRequestMethodHeaders(IRequestMethodHeaders):
+    def populate_headers(self) -> None:
+        authorization = AuthorizationRequestHeader(self.auth_token)
+        self.headers.update(authorization.header)
 
-    _json_content_type = 'application/json'
-
-    def __init__(self, JWT: str):
-        self.authorization = JWT
-        self.content_type = self._json_content_type
-
-    @property
-    def content_type(self):
-        return self._content_type
-
-    @content_type.setter
-    def content_type(self, content_type: str):
-        self._content_type = {'Content-Type': content_type}
-        self.headers.update(self.content_type)
+        content_type = ContentTypeRequestHeader('application/json')
+        self.headers.update(content_type.header)
 
 
-class GetRequestHeaders(IRequestHeaders):
-    """Set the headers for GET requests."""
-
-    def __init__(self, JWT: str):
-        self.authorization = JWT
+class GetRequestMethodHeaders(IRequestMethodHeaders):
+    def populate_headers(self) -> None:
+        authorization = AuthorizationRequestHeader(self.auth_token)
+        self.headers.update(authorization.header)
