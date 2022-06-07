@@ -5,35 +5,31 @@ from discord.headers import *
 class TestRequestHeader:
     def test_authorization_request_header(self, auth_token):
         expected_value = {'Authorization': auth_token}
-        authorization = AuthorizationRequestHeader(auth_token)
-
-        authorization_header = authorization.header
+        authorization_header = Authorization(auth_token).header
 
         assert authorization_header == expected_value
 
     def test_content_type_request_header(self):
         content_type = 'application/json'
-        expected_value = {'Content-Type': content_type}
-        content_type = ContentTypeRequestHeader(content_type)
 
-        content_type_header = content_type.header
+        expected_value = {'Content-Type': content_type}
+        content_type_header = ContentType(content_type).header
 
         assert content_type_header == expected_value
 
 
 class TestRequestMethodHeaders:
-    def test_get_request_method_headers(self, auth_token):
+    def test_get_headers(self, auth_token):
         expected_value = dict(Authorization=auth_token)
+        get_headers = Get(auth_token).headers
 
-        get_request_method_headers = GetRequestMethodHeaders(auth_token)
+        assert get_headers == expected_value
 
-        assert get_request_method_headers.headers == expected_value
-
-    def test_patch_request_method_headers(self, auth_token):
+    def test_patch_headers(self, auth_token):
         expected_value = {
             'Authorization': auth_token,
             'Content-Type': 'application/json'
         }
-        patch_request_method_headers = PatchRequestMethodHeaders(auth_token)
+        patch_headers = Patch(auth_token).headers
 
-        assert patch_request_method_headers.headers == expected_value
+        assert patch_headers == expected_value

@@ -19,13 +19,13 @@ class IRequestHeader(ABC):
         self._header = {self.header_key: header}
 
 
-class AuthorizationRequestHeader(IRequestHeader):
+class Authorization(IRequestHeader):
     @property
     def header_key(self) -> str:
         return 'Authorization'
 
 
-class ContentTypeRequestHeader(IRequestHeader):
+class ContentType(IRequestHeader):
     @property
     def header_key(self) -> str:
         return 'Content-Type'
@@ -46,16 +46,16 @@ class IRequestMethodHeaders(ABC):
     def populate_headers(self) -> None: pass
 
 
-class PatchRequestMethodHeaders(IRequestMethodHeaders):
+class Patch(IRequestMethodHeaders):
     def populate_headers(self) -> None:
-        authorization = AuthorizationRequestHeader(self.auth_token)
+        authorization = Authorization(self.auth_token)
         self.headers.update(authorization.header)
 
-        content_type = ContentTypeRequestHeader('application/json')
+        content_type = ContentType('application/json')
         self.headers.update(content_type.header)
 
 
-class GetRequestMethodHeaders(IRequestMethodHeaders):
+class Get(IRequestMethodHeaders):
     def populate_headers(self) -> None:
-        authorization = AuthorizationRequestHeader(self.auth_token)
+        authorization = Authorization(self.auth_token)
         self.headers.update(authorization.header)
