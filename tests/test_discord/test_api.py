@@ -3,22 +3,38 @@ import pytest
 from discord.api import *
 
 
+@pytest.fixture
+def endpoint():
+    return 'http://test.test/'
+
+
 class TestGet:
-    def test_perform_get_request(self, mocker, requests_mock,auth_token):
-        # ARRANGE
-        url, text_data = 'http://test.com/', '{"test": 123}'
-        headers = {'Authorization': auth_token}  # GetHeaders.headers
-        request_method = Get(url=url, headers=headers)
+    def test_perform_get_request(self, requests_mock, auth_token, endpoint):
+        headers = {'Authorization': auth_token}
+        request_method = Get(endpoint, headers)
 
-        # MOCK
-        requests_mock.get(url, text=text_data)
+        text_data = '{"test": 123}'
+        requests_mock.get(endpoint, text=text_data)
 
-        # ACT
         response = request_method.perform_get_request()
 
-        # ASSERT
-        assert request_method.headers['Authorization']
+        assert request_method.headers == headers
         assert response.status_code == 200
-        assert response.url == url
+        assert response.url == endpoint
         assert response.text == text_data
 
+
+class TestPatch:
+    def test_perform_patch_request(self, requests_mock, auth_token, endpoint):
+        headers = {
+            'Authorization': auth_token,
+            'Content-Type': 'application/json'
+        }
+        request_method = Patch(endpoint, headers)
+        requests_mock.patch(endpoint)
+
+        response = request_method.perform_patch_request(data={'status': 'dnd'})
+
+        assert request_method.headers == headers
+        assert response.status_code == 200
+        assert response.url == endpoint
