@@ -46,7 +46,7 @@ class IRequestMethodHeaders(ABC):
     def populate_headers(self) -> None: pass
 
 
-class Patch(IRequestMethodHeaders):
+class PatchHeaders(IRequestMethodHeaders):
     def populate_headers(self) -> None:
         authorization = Authorization(self.auth_token)
         self.headers.update(authorization.header)
@@ -55,7 +55,7 @@ class Patch(IRequestMethodHeaders):
         self.headers.update(content_type.header)
 
 
-class Get(IRequestMethodHeaders):
+class GetHeaders(IRequestMethodHeaders):
     def populate_headers(self) -> None:
         authorization = Authorization(self.auth_token)
         self.headers.update(authorization.header)

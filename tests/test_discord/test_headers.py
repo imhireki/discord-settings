@@ -21,7 +21,7 @@ class TestRequestHeader:
 class TestRequestMethodHeaders:
     def test_get_headers(self, auth_token):
         expected_value = dict(Authorization=auth_token)
-        get_headers = Get(auth_token).headers
+        get_headers = GetHeaders(auth_token).headers
 
         assert get_headers == expected_value
 
@@ -30,6 +30,6 @@ class TestRequestMethodHeaders:
             'Authorization': auth_token,
             'Content-Type': 'application/json'
         }
-        patch_headers = Patch(auth_token).headers
+        patch_headers = PatchHeaders(auth_token).headers
 
         assert patch_headers == expected_value
