@@ -33,3 +33,9 @@ class IRequest(ABC):
 class PatchRequest(IRequest):
     def perform_request(self) -> None:
         return self.request_method.perform_patch_request()
+
+
+class GetRequest(IRequest):
+    def perform_request(self) -> Dict[str, Union[str, None]]:
+        return self.request_method.perform_get_request()
+

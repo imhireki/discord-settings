@@ -43,13 +43,26 @@ class TestPatch:
 class TestPatchRequest:
     def test_perform_request(self, mocker):
         perform_patch_request_mock = mocker.Mock()
-        request_method_mock = mocker.Mock(
+        patch_request_method_mock = mocker.Mock(
             perform_patch_request=perform_patch_request_mock
         )
 
-        patch_request = PatchRequest(request_method_mock)
+        patch_request = PatchRequest(patch_request_method_mock)
 
         patch_request.perform_request()
 
         assert perform_patch_request_mock.called
 
+
+class TestGetRequest:
+    def test_perform_request(self, mocker):
+        perform_get_request_mock = mocker.Mock()
+        get_request_method_mock = mocker.Mock(
+            perform_get_request=perform_get_request_mock
+        )
+
+        get_request = GetRequest(get_request_method_mock)
+
+        get_request.perform_request()
+
+        assert perform_get_request_mock.called
