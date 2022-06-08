@@ -38,3 +38,18 @@ class TestPatch:
         assert request_method.headers == headers
         assert response.status_code == 200
         assert response.url == endpoint
+
+
+class TestPatchRequest:
+    def test_perform_request(self, mocker):
+        perform_patch_request_mock = mocker.Mock()
+        request_method_mock = mocker.Mock(
+            perform_patch_request=perform_patch_request_mock
+        )
+
+        patch_request = PatchRequest(request_method_mock)
+
+        patch_request.perform_request()
+
+        assert perform_patch_request_mock.called
+
