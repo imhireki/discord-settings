@@ -66,3 +66,40 @@ class TestGetRequest:
         get_request.perform_request()
 
         assert perform_get_request_mock.called
+
+
+class TestDiscordSettingsRequestClient:
+    def test_set_request(self, mocker):
+        settings_client = DiscordSettingsRequestClient()
+
+        get_request_mock = mocker.Mock()
+        patch_request_mock = mocker.Mock()
+
+        settings_client.set_request('GET', get_request_mock)
+        settings_client.set_request('PATCH', patch_request_mock)
+
+        assert len(settings_client._requests) == 2
+        assert settings_client._requests['GET'] == get_request_mock
+        assert settings_client._requests['PATCH'] == patch_request_mock
+
+    def test_perform_request(self, mocker):
+        settings_client = DiscordSettingsRequestClient()
+
+        get_perform_request_mock = mocker.Mock()
+        get_request_mock = mocker.Mock(perform_request=get_perform_request_mock)
+
+        patch_perform_request_mock = mocker.Mock()
+        patch_request_mock = mocker.Mock(
+            perform_request=patch_perform_request_mock
+        )
+        patch_data = {'data': 123}
+
+        settings_client.set_request('GET', get_request_mock)
+        settings_client.set_request('PATCH', patch_request_mock)
+
+        settings_client.perform_request('GET')
+        settings_client.perform_request('PATCH', data=patch_data)
+
+        assert get_perform_request_mock.called
+        assert patch_perform_request_mock.called
+        patch_perform_request_mock.assert_called_with(data=patch_data)
