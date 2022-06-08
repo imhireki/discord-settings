@@ -32,15 +32,10 @@ class ContentType(IRequestHeader):
 
 
 class IRequestMethodHeaders(ABC):
-    _headers: Dict[str, str] = {}
-
     def __init__(self, auth_token: str) -> None:
+        self.headers: Dict[str, str] = {}
         self.auth_token: str = auth_token
         self.populate_headers()
-
-    @property
-    def headers(self) -> Dict[str, str]:
-        return self._headers
 
     @abstractmethod
     def populate_headers(self) -> None: pass
