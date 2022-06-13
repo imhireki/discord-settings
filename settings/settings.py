@@ -4,6 +4,7 @@ from iterators.iterator import ISettingIterator
 from iterables.iterable import ISettingIterable
 
 from copy import deepcopy
+import json
 
 
 class LocalSettings:
@@ -29,7 +30,7 @@ class LocalSettings:
 
     def update_local(self) -> None:
         response = self.request_client.get()
-        self._settings.update(eval(response.text))
+        self._settings.update(json.loads(response.text))
 
 
 class Buffer:
