@@ -1,48 +1,36 @@
 from collections.abc import Iterable
-from abc import abstractmethod
-from typing import Dict, List, Union
-
 from iterators import iterator
+from abc import abstractmethod
+from typing import Union
 
 
 class ISettingIterable(Iterable):
-    """Interface to define a collection for the fields from the API."""
-
-    def __init__(self, items: Union[List[str], str]):
-        self._items = items
-
-    def __iter__(self):
-        """Default iterator. Never run out of items."""
-        return iterator.Unlimited(self._items)
+    def __init__(self, items: Union[list[str], str]) -> None:
+        self._items: Union[list[str], str] = items
 
     @abstractmethod
-    def name(self, value: str):
-        """Set the dynamic 'name' for the requests."""
-        pass
+    def get_request_data(value: str) -> dict[str, str]: pass
+
+    def __iter__(self) -> iterator.Unlimited:
+        return iterator.Unlimited(self._items)
 
 
 class EmojiName(ISettingIterable):
-    """Emoji setting."""
-
-    def name(self, value: str):
-        return {'custom_status': {'emoji_name': f'{value}'}}
+    def get_request_data(self, value: str) -> dict[str, str]:
+        return {'custom_status': {'emoji_name': value}}
 
 
 class Text(ISettingIterable):
-    """Text setting."""
+    def get_request_data(self, value: str) -> dict[str, str]:
+        return {'custom_status': {'text': value}}
 
-    def name(self, value: str):
-        return {'custom_status': {'text': f'{value}'}}
-
-    def multiple_before_index(self) -> iterator.MultipleBeforeIndex:
-        """Custom iterator."""
+    def iter_data_before_index(self) -> iterator.MultipleBeforeIndex:
         return iterator.MultipleBeforeIndex(self._items)
 
+
 class Status(ISettingIterable):
-    """Status setting."""
+    def __init__(self) -> None:
+        super().__init__(['online', 'idle', 'dnd'])
 
-    def __init__(self):
-        self._items = ['online', 'idle', 'dnd']
-
-    def name(self, value: str):
-        return {'status': f'{value}'}
+    def get_request_data(self, value: str):
+        return {'status': value}
