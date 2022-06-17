@@ -36,3 +36,18 @@ class IUnlimitedItems(ISettingIterator):
             self.reset_iterable_index()
 
         return self.get_iterable_item()
+
+
+class Increase(IUnlimitedItems):
+    """[abc, xyz]  =  abc -> xyz"""
+
+    def get_iterable_item(self):
+        return self.iterable[self.iterable_index]
+
+    def set_next_iterable_index(self):
+        if not hasattr(self, 'iterable_index'):
+            return self.reset_iterable_index()
+        self.iterable_index += 1
+
+    def reset_iterable_index(self):
+        self.iterable_index = 0
