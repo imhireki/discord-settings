@@ -66,3 +66,32 @@ class Decrease(IUnlimitedItems):
 
     def reset_iterable_index(self):
         self.iterable_index = self.max_iterable_index
+
+
+class IUnlimitedItemsDecorator(ISettingIterator):
+    def __init__(self, iterator):
+        self.iterator = iterator
+
+    def set_next_iterable(self):
+        self.iterable = next(self.iterator)
+
+    def indexes_in_iterable_range(self, index, max_index):
+        return self.iterator.indexes_in_iterable_range(index, max_index)
+
+    def is_first_loop(self):
+        return True if not hasattr(self, 'iterable') else False
+
+    def __next__(self):
+        if self.is_first_loop():
+            self.set_next_iterable()
+            self.max_iterable_index = len(self.iterable) - 1
+
+        self.set_next_iterable_index()
+
+        if not self.indexes_in_iterable_range(self.iterable_index,
+                                              self.max_iterable_index):
+            self.set_next_iterable()
+            self.max_iterable_index = len(self.iterable) - 1
+            self.reset_iterable_index()
+
+        return self.get_iterable_item()
