@@ -19,14 +19,14 @@ class ISettingIterator(ABC):
     @abstractmethod
     def reset_iterable_index(self): pass
 
+    def indexes_in_iterable_range(self, index, max_index):
+        return True if 0 <= index <= max_index else False
+
 
 class IUnlimitedItems(ISettingIterator):
     def __init__(self, iterable):
         self.iterable = iterable
         self.max_iterable_index = len(self.iterable) - 1
-
-    def indexes_in_iterable_range(self, index, max_index):
-        return True if 0 <= index <= max_index else False
 
     def __next__(self):
         self.set_next_iterable_index()
@@ -74,9 +74,6 @@ class IUnlimitedItemsDecorator(ISettingIterator):
 
     def set_next_iterable(self):
         self.iterable = next(self.iterator)
-
-    def indexes_in_iterable_range(self, index, max_index):
-        return self.iterator.indexes_in_iterable_range(index, max_index)
 
     def is_first_loop(self):
         return True if not hasattr(self, 'iterable') else False
