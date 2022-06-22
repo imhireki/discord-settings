@@ -19,3 +19,14 @@ def test_decrease():
     assert next(decrease_iterator) == iterable[1]
     assert next(decrease_iterator) == iterable[0]
     assert next(decrease_iterator) == iterable[1]
+
+
+def test_single_item():
+    iterable = "abc"
+    abc_iterator = iter(iterable)
+
+    single_item_iterator = iterator.SingleItem(abc_iterator)
+
+    assert next(single_item_iterator) == iterable[0]
+    assert next(single_item_iterator) == iterable[1]
+    assert next(single_item_iterator) == iterable[2]
