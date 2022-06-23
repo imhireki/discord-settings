@@ -17,13 +17,15 @@ def iterable(mocker, iterable_items):
 def request_data_value():
     return '123'
 
-def test_increase():
-    iterable = ["abc", "xyz"]
+def test_increase(iterable, iterable_items, request_data_value):
     increase_iterator = iterator.Increase(iterable)
+    request_data = increase_iterator.get_request_data(request_data_value)
 
-    assert next(increase_iterator) == iterable[0]
-    assert next(increase_iterator) == iterable[1]
-    assert next(increase_iterator) == iterable[0]
+    assert request_data == iterable.get_request_data(request_data_value)
+
+    assert next(increase_iterator) == iterable_items[0]
+    assert next(increase_iterator) == iterable_items[1]
+    assert next(increase_iterator) == iterable_items[0]
 
 def test_decrease():
     iterable = ["abc", "xyz"]
