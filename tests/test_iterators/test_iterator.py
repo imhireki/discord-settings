@@ -3,6 +3,20 @@ import pytest
 from iterators import iterator
 
 
+@pytest.fixture
+def iterable_items():
+    return ["xyz", "abc"]
+
+@pytest.fixture
+def iterable(mocker, iterable_items):
+    def get_request_data(value):
+        return {"test": value}
+    return mocker.Mock(_items=iterable_items, get_request_data=get_request_data)
+
+@pytest.fixture
+def request_data_value():
+    return '123'
+
 def test_increase():
     iterable = ["abc", "xyz"]
     increase_iterator = iterator.Increase(iterable)
