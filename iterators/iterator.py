@@ -24,9 +24,13 @@ class ISettingIterator(ABC):
 
 
 class IUnlimitedItems(ISettingIterator):
-    def __init__(self, collection):
-        self.collection = collection
+    def __init__(self, iterable):
+        self.iterable = iterable
+        self.collection = self.iterable._items
         self.max_collection_index = len(self.collection) - 1
+
+    def get_request_data(self, value):
+       return self.iterable.get_request_data(value)
 
     def __next__(self):
         self.set_next_collection_index()
