@@ -37,7 +37,7 @@ def test_decrease(iterable, iterable_items, request_data_value):
     assert next(decrease_iterator) == iterable_items[0]
     assert next(decrease_iterator) == iterable_items[1]
 
-def test_single_item(iterable, iterable_items):
+def test_single_item(iterable_items):
     _iterator = iter(iterable_items)
     single_item_iterator = iterator.SingleItem(_iterator)
 
@@ -45,12 +45,10 @@ def test_single_item(iterable, iterable_items):
     assert next(single_item_iterator) == iterable_items[0][1]
     assert next(single_item_iterator) == iterable_items[0][2]
 
-def test_items_before_next_index():
-    iterable = ["xyz"]
-    xyz_iterator = iter(iterable)
+def test_items_before_next_index(iterable_items):
+    _iterator = iter(iterable_items)
+    items_before_next_index_iterator = iterator.ItemsBeforeNextIndex(_iterator)
 
-    items_before_next_index_iterator = iterator.ItemsBeforeNextIndex(xyz_iterator)
-
-    assert next(items_before_next_index_iterator) == iterable[0][:1]
-    assert next(items_before_next_index_iterator) == iterable[0][:2]
-    assert next(items_before_next_index_iterator) == iterable[0][:3]
+    assert next(items_before_next_index_iterator) == iterable_items[0][:1]
+    assert next(items_before_next_index_iterator) == iterable_items[0][:2]
+    assert next(items_before_next_index_iterator) == iterable_items[0][:3]
