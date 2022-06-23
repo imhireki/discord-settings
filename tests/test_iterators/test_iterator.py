@@ -27,13 +27,15 @@ def test_increase(iterable, iterable_items, request_data_value):
     assert next(increase_iterator) == iterable_items[1]
     assert next(increase_iterator) == iterable_items[0]
 
-def test_decrease():
-    iterable = ["abc", "xyz"]
+def test_decrease(iterable, iterable_items, request_data_value):
     decrease_iterator = iterator.Decrease(iterable)
+    request_data = decrease_iterator.get_request_data(request_data_value)
 
-    assert next(decrease_iterator) == iterable[1]
-    assert next(decrease_iterator) == iterable[0]
-    assert next(decrease_iterator) == iterable[1]
+    assert request_data == iterable.get_request_data(request_data_value)
+
+    assert next(decrease_iterator) == iterable_items[1]
+    assert next(decrease_iterator) == iterable_items[0]
+    assert next(decrease_iterator) == iterable_items[1]
 
 def test_single_item():
     iterable = ["abc"]
