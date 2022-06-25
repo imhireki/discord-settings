@@ -54,3 +54,12 @@ def test_items_before_next_index(iterable_items):
     assert next(items_before_next_index_iterator) == iterable_items[0][:2]
     assert next(items_before_next_index_iterator) == iterable_items[0][:3]
     assert next(items_before_next_index_iterator) == iterable_items[1][:1]
+
+def test_items_after_index(iterable_items):
+    _iterator = iter(iterable_items)
+    items_after_index_iterator = iterator.ItemsAfterIndex(_iterator)
+
+    assert next(items_after_index_iterator) == iterable_items[0][-1:]
+    assert next(items_after_index_iterator) == iterable_items[0][-2:]
+    assert next(items_after_index_iterator) == iterable_items[0][-3:]
+    assert next(items_after_index_iterator) == iterable_items[1][-1:]
