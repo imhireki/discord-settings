@@ -126,3 +126,18 @@ class ItemsBeforeNextIndex(IUnlimitedItemsDecorator):
 
     def reset_collection_index(self):
         self.collection_index = 0
+
+
+class ItemsAfterIndex(IUnlimitedItemsDecorator):
+    """xyz  =  z -> yz -> xyz"""
+
+    def get_collection_item(self):
+        return self.collection[self.collection_index:self.max_collection_index + 1]
+
+    def set_next_collection_index(self):
+        if not hasattr(self, 'collection_index'):
+            return self.reset_collection_index()
+        self.collection_index -= 1
+
+    def reset_collection_index(self):
+        self.collection_index = self.max_collection_index
