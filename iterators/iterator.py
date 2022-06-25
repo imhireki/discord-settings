@@ -141,3 +141,16 @@ class ItemsAfterIndex(IUnlimitedItemsDecorator):
 
     def reset_collection_index(self):
         self.collection_index = self.max_collection_index
+
+
+class IteratorManager:
+    def __init__(self, *iterators):
+        self.iterators = iterators
+
+    def get_iterators_result(self):
+        return [next(iterator) for iterator in self.iterators]
+
+    def __next__(self):
+        iterators_result = self.get_iterators_result()
+        iterators_result_string = ''.join(iterators_result)
+        return iterators_result_string
