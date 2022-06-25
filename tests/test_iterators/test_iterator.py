@@ -63,3 +63,13 @@ def test_items_after_index(iterable_items):
     assert next(items_after_index_iterator) == iterable_items[0][-2:]
     assert next(items_after_index_iterator) == iterable_items[0][-3:]
     assert next(items_after_index_iterator) == iterable_items[1][-1:]
+
+def test_iterator_manager(iterable_items):
+    iterator_1 = iter(iterable_items[0])  # xyz
+    iterator_2 = iter(iterable_items[1])  # abc
+
+    iterator_manager = iterator.IteratorManager(iterator_1, iterator_2)
+
+    assert next(iterator_manager) == iterable_items[0][0] + iterable_items[1][0]
+    assert next(iterator_manager) == iterable_items[0][1] + iterable_items[1][1]
+    assert next(iterator_manager) == iterable_items[0][2] + iterable_items[1][2]
