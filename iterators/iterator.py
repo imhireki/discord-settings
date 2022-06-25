@@ -144,11 +144,19 @@ class ItemsAfterIndex(IUnlimitedItemsDecorator):
 
 
 class IteratorManager:
-    def __init__(self, *iterators):
-        self.iterators = iterators
+    def __init__(self, iterator, prefix_iterator=None, suffix_iterator=None):
+        self.iterator = iterator
+        self.prefix_iterator = prefix_iterator
+        self.suffix_iterator = suffix_iterator
 
     def get_iterators_result(self):
-        return [next(iterator) for iterator in self.iterators]
+        return [
+            item for item in [
+                next(self.prefix_iterator) if self.prefix_iterator else None,
+                next(self.iterator),
+                next(self.suffix_iterator) if self.suffix_iterator else None]
+            if item
+        ]
 
     def __next__(self):
         iterators_result = self.get_iterators_result()
