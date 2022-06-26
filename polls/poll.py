@@ -9,5 +9,6 @@ class Poll:
 
     def polling(self, timeout: int = 3) -> None:
         while True:
-            self._settings.state = self._buffer.get_updated_buffer()
+            updated_buffer = self._buffer.get_updated_buffer()
+            self._settings.update(updated_buffer)
             sleep(timeout)
