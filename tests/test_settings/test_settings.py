@@ -50,7 +50,7 @@ def test_settings_buffer(mocker):
         iterators=[setting_a_iter, setting_b_iter]
     )
 
-    for item_a, item_b in zip(setting_a._items, setting_b._items):
+    for item_a, item_b in zip(setting_a.items, setting_b.items):
 
         assert settings_buffer.get_updated_buffer() == {
             "setting": {"a": item_a, "b": item_b}
