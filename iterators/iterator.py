@@ -31,7 +31,7 @@ class IUnlimitedItems(ISettingIterator):
         self.max_collection_index: int = len(self.collection) - 1
 
     def set_collection(self, iterable: Iterable) -> Union[str, tuple, list]:
-        return iterable if isinstance(iterable, (list, tuple)) else iterable._items
+        return iterable if isinstance(iterable, (list, tuple)) else iterable.items
 
     def get_request_data(self, value: str) -> dict[str, str]:
        return self.iterable.get_request_data(value)

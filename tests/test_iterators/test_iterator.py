@@ -11,7 +11,7 @@ def iterable_items():
 def iterable(mocker, iterable_items):
     def get_request_data(value):
         return {"test": value}
-    return mocker.Mock(_items=iterable_items, get_request_data=get_request_data)
+    return mocker.Mock(items=iterable_items, get_request_data=get_request_data)
 
 @pytest.fixture
 def request_data_value():
