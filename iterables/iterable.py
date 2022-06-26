@@ -5,14 +5,20 @@ from typing import Union
 
 
 class ISettingIterable(Iterable):
-    def __init__(self, items: Union[list[str], str]) -> None:
-        self._items: Union[list[str], str] = items
+    def __init__(self, items: Union[str, tuple, list]) -> None:
+        self.items: Union[str, tuple, list] = items
 
     @abstractmethod
     def get_request_data(value: str) -> dict[str, str]: pass
 
-    def __iter__(self) -> iterator.Unlimited:
-        return iterator.Unlimited(self._items)
+    def __iter__(self) -> iterator.Increase:
+        return self.increase()
+
+    def increase(self) -> iterator.Increase:
+        return iterator.Increase(self)
+
+    def decrease(self) -> iterator.Decrease:
+        return iterator.Decrease(self)
 
 
 class EmojiName(ISettingIterable):
@@ -24,13 +30,10 @@ class Text(ISettingIterable):
     def get_request_data(self, value: str) -> dict[str, str]:
         return {'custom_status': {'text': value}}
 
-    def iter_data_before_index(self) -> iterator.MultipleBeforeIndex:
-        return iterator.MultipleBeforeIndex(self._items)
-
 
 class Status(ISettingIterable):
-    def __init__(self) -> None:
-        super().__init__(['online', 'idle', 'dnd'])
+    def __init__(self, items: Union[str, tuple, list] = []) -> None:
+        super().__init__(items or ['online', 'idle', 'dnd'])
 
-    def get_request_data(self, value: str):
+    def get_request_data(self, value: str) -> dict[str, str]:
         return {'status': value}
