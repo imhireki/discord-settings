@@ -1,10 +1,9 @@
-from api.client import IRequestClient
+from copy import deepcopy
+import json
 
 from iterators.iterator import ISettingIterator
 from iterables.iterable import ISettingIterable
-
-from copy import deepcopy
-import json
+from api.client import IRequestClient
 
 
 class LocalSettings:
@@ -35,7 +34,7 @@ class LocalSettings:
 
 class SettingsBuffer:
     def __init__(self, *iterators: list[ISettingIterator]) -> None:
-        self._iterators = iterators
+        self._iterators: list[ISettingIterator] = iterators
 
     def add_data_to_settings(self, settings: dict[str, str],
                              data: dict[str, str]) -> dict[str, str]:
@@ -46,7 +45,7 @@ class SettingsBuffer:
                 settings[key].update(value)
         return settings
 
-    def get_updated_buffer(self):
+    def get_updated_buffer(self) -> dict[str, str]:
         settings: dict[str, str] = {}
 
         for iterator in self._iterators:

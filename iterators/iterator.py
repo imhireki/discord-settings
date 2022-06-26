@@ -1,5 +1,5 @@
-from abc import ABC, abstractmethod
 from typing import Union, Iterable, Iterator
+from abc import ABC, abstractmethod
 
 
 class ISettingIterator(ABC):
@@ -27,7 +27,7 @@ class ISettingIterator(ABC):
 class IUnlimitedItems(ISettingIterator):
     def __init__(self, iterable: Iterable) -> None:
         self.iterable: Iterable = iterable
-        self.collection: Union[str, tuple, list] = self.set_collection(self.iterable)
+        self.collection: Union[tuple, list] = self.set_collection(self.iterable)
         self.max_collection_index: int = len(self.collection) - 1
 
     def set_collection(self, iterable: Iterable) -> Union[str, tuple, list]:
@@ -77,9 +77,9 @@ class Decrease(IUnlimitedItems):
 
 
 class IUnlimitedItemsDecorator(ISettingIterator):
-    def __init__(self, iterator: IUnlimitedItems):
+    def __init__(self, iterator: IUnlimitedItems) -> None:
         self.iterator: IUnlimitedItems = iterator
-        self.iterable = iterator.iterable
+        self.iterable: Iterable = iterator.iterable
 
     def set_next_collection(self) -> None:
         self.collection: str = next(self.iterator)
@@ -152,7 +152,7 @@ class IteratorManager:
     def __init__(self, iterator: Iterator, prefix_iterator: Iterator = None,
                  suffix_iterator: Iterator = None) -> None:
         self.iterator: Iterator = iterator
-        self.iterable = iterator.iterable
+        self.iterable: Iterable = iterator.iterable
         self.prefix_iterator: Iterator = prefix_iterator
         self.suffix_iterator: Iterator = suffix_iterator
 
