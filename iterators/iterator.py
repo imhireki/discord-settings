@@ -79,6 +79,7 @@ class Decrease(IUnlimitedItems):
 class IUnlimitedItemsDecorator(ISettingIterator):
     def __init__(self, iterator: IUnlimitedItems):
         self.iterator: IUnlimitedItems = iterator
+        self.iterable = iterator.iterable
 
     def set_next_collection(self) -> None:
         self.collection: str = next(self.iterator)
@@ -151,6 +152,7 @@ class IteratorManager:
     def __init__(self, iterator: Iterator, prefix_iterator: Iterator = None,
                  suffix_iterator: Iterator = None) -> None:
         self.iterator: Iterator = iterator
+        self.iterable = iterator.iterable
         self.prefix_iterator: Iterator = prefix_iterator
         self.suffix_iterator: Iterator = suffix_iterator
 

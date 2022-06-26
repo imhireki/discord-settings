@@ -34,9 +34,7 @@ class LocalSettings:
 
 
 class SettingsBuffer:
-    def __init__(self, iterables: list[ISettingIterable],
-                 iterators: list[ISettingIterator]) -> None:
-        self._iterables = iterables
+    def __init__(self, *iterators: list[ISettingIterator]) -> None:
         self._iterators = iterators
 
     def add_data_to_settings(self, settings: dict[str, str],
@@ -51,9 +49,9 @@ class SettingsBuffer:
     def get_updated_buffer(self):
         settings: dict[str, str] = {}
 
-        for iterable, iterator in zip(self._iterables, self._iterators):
+        for iterator in self._iterators:
 
-            request_data = iterable.get_request_data(next(iterator))
+            request_data = iterator.iterable.get_request_data(next(iterator))
             settings = self.add_data_to_settings(settings, request_data)
 
         return settings

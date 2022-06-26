@@ -22,7 +22,6 @@ def test_local_settings(mocker):
 
     assert local_settings._settings == remote_settings_updated
 
-
 def test_settings_buffer(mocker):
     class SettingA(iterable.ISettingIterable):
         def __init__(self) -> None:
@@ -45,13 +44,9 @@ def test_settings_buffer(mocker):
     setting_b = SettingB()
     setting_b_iter = iter(setting_b)
 
-    settings_buffer = settings.SettingsBuffer(
-        iterables=[setting_a, setting_b],
-        iterators=[setting_a_iter, setting_b_iter]
-    )
+    settings_buffer = settings.SettingsBuffer(setting_a_iter, setting_b_iter)
 
     for item_a, item_b in zip(setting_a.items, setting_b.items):
-
         assert settings_buffer.get_updated_buffer() == {
             "setting": {"a": item_a, "b": item_b}
         }
