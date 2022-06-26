@@ -3,8 +3,8 @@ import json
 
 import pytest
 
-from settings import settings
 from iterables import iterable
+from settings import settings
 
 
 def test_local_settings(mocker):
@@ -39,12 +39,12 @@ def test_settings_buffer(mocker):
             return {"setting": {"b": value}}
 
     setting_a = SettingA()
-    setting_a_iter = iter(setting_a)
+    iter_setting_a = iter(setting_a)
 
     setting_b = SettingB()
-    setting_b_iter = iter(setting_b)
+    iter_setting_b = iter(setting_b)
 
-    settings_buffer = settings.SettingsBuffer(setting_a_iter, setting_b_iter)
+    settings_buffer = settings.SettingsBuffer(iter_setting_a, iter_setting_b)
 
     for item_a, item_b in zip(setting_a.items, setting_b.items):
         assert settings_buffer.get_updated_buffer() == {

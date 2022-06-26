@@ -1,5 +1,6 @@
-from polls import poll
 import pytest
+
+from polls import poll
 
 
 @pytest.mark.parametrize('updated_buffer', [{"x": "a"}, {"y": "b"}])

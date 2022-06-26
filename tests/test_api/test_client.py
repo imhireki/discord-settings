@@ -1,4 +1,5 @@
 import pytest
+
 from api import client
 
 
@@ -10,7 +11,6 @@ def dict_items_in_dict(dict_a: dict, dict_b: dict):
         if a == b
     ])
     return True if match_items == dict_a else False
-
 
 def test_client_get_request(requests_mock, auth_token):
     request_client = client.RequestClientV9(auth_token)
@@ -27,7 +27,6 @@ def test_client_get_request(requests_mock, auth_token):
     assert response.url == request_client.endpoint
     assert response.text == text_data
     assert dict_items_in_dict(get_headers, response.request.headers)
-
 
 def test_client_patch_request(requests_mock, auth_token):
     request_client = client.RequestClientV9(auth_token)

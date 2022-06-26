@@ -1,5 +1,6 @@
-from iterables import iterable
 import pytest
+
+from iterables import iterable
 
 
 emojis = ['💫', '✨', '⭐']
