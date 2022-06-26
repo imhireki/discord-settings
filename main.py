@@ -1,7 +1,10 @@
-from discord import api, headers
+from api import client
+
+from settings import settings
+
 from iterators import iterator
 from iterables import iterable
-from state import state
+
 from polls import poll
 
 
@@ -12,16 +15,17 @@ data_emoji = {
 }
 
 data_text = {
-    'laugh': ['Bahaha'],
+    'laugh': ['bahaha', 'lol'],
 }
 
 
 if __name__ == '__main__':
     JWT = ''
 
-    api = api.DiscordSettingsAPI(JWT)  # Request
+    request_client = client.RequestClientV9(JWT)
 
-    settings = state.Settings(api)  # Settings
+    _settings = settings.LocalSettings(request_client)
+    _settings.update({'status': 'online'})
 
     # Iterable
     emoji_name = iterable.EmojiName(data_emoji['star'])
@@ -31,25 +35,23 @@ if __name__ == '__main__':
     # Iterator
     iter_emoji_name = iter(emoji_name)
     iter_status = iter(status)
-    iter_text = text.multiple_before_index()
 
-    # Iterators' Decorators
-    iter_text = iterator.Prefix(iter_text, '$')
-    iter_text = iterator.Suffix(iter_text, '_ ')
+    iter_prefix = iterator.Increase(["$"])
+    _iter_text = iterator.ItemsBeforeNextIndex(iter(text))
+    iter_suffix = iterator.Increase(["_", " "])
+
+    iter_text = iterator.IteratorManager(_iter_text, iter_prefix, iter_suffix)
 
     # Buffer
-    buffer = state.Buffer(
-        iterables=[emoji_name, text, status],
-        iterators=[iter_emoji_name, iter_text, iter_status]
-    )
+    buffer = settings.SettingsBuffer(iter_emoji_name, iter_text, iter_status)
 
     try:
         # Polling
-        poll.Poll(settings, buffer).polling(timeout=1)
+        poll.Poll(_settings, buffer).polling(timeout=3)
     except Exception:
         pass
     finally:
-        api.patch({
+        request_client.patch({
             'custom_status': None,
             'status': 'dnd'
         })
