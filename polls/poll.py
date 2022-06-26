@@ -1,17 +1,13 @@
-from state.state import Settings, Buffer
+from settings import settings
 from time import sleep
 
 
 class Poll:
-    """Loop management."""
+    def __init__(self, settings: settings.LocalSettings, buffer: settings.SettingsBuffer) -> None:
+        self._settings: settings.LocalSettings = settings
+        self._buffer: settings.SettingsBuffer = buffer
 
-    def __init__(self, settings: Settings, buffer: Buffer):
-        self._settings = settings
-        self._buffer = buffer
-
-    def polling(self, timeout=3):
-        """Update the settings' state."""
-
+    def polling(self, timeout: int = 3) -> None:
         while True:
             self._settings.state = self._buffer.get_updated_buffer()
             sleep(timeout)
