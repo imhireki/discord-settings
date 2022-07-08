@@ -52,6 +52,21 @@ def test_items_after_index(iterable_items, iterator_mock):
     assert next(items_after_index_iterator) == iterable_items[0][-3:]
     assert next(items_after_index_iterator) == iterable_items[1][-1:]
 
+def test_upper_index_item(iterable_items, iterator_mock):
+    _iterator = iterator_mock()
+    upper_index_item_iterator = iterator.UpperIndexItem(_iterator)
+
+    def make_item_upper_on_collection(index, collection):
+        return ''.join([
+            item.upper() if index == item_index else item
+            for item_index, item in enumerate(collection)
+        ])
+
+    assert next(upper_index_item_iterator) == make_item_upper_on_collection(0, iterable_items[0])
+    assert next(upper_index_item_iterator) == make_item_upper_on_collection(1, iterable_items[0])
+    assert next(upper_index_item_iterator) == make_item_upper_on_collection(2, iterable_items[0])
+    assert next(upper_index_item_iterator) == make_item_upper_on_collection(0, iterable_items[1])
+
 def test_iterator_manager(iterable_items, iterator_mock):
     prefix_iterator = iter(iterable_items[1])
     _iterator = iterator_mock()
