@@ -148,6 +148,24 @@ class ItemsAfterIndex(IUnlimitedItemsDecorator):
         self.collection_index = self.max_collection_index
 
 
+class UpperIndexItem(IUnlimitedItemsDecorator):
+    """xyz  =  Xyz -> xYz -> xyZ"""
+
+    def get_collection_item(self) -> str:
+        return ''.join([
+            item.upper() if index == self.collection_index else item
+            for index, item in enumerate(self.collection)
+        ])
+
+    def set_next_collection_index(self) -> None:
+        if not hasattr(self, 'collection_index'):
+            return self.reset_collection_index()
+        self.collection_index += 1
+
+    def reset_collection_index(self) -> None:
+        self.collection_index = 0
+
+
 class IteratorManager:
     def __init__(self, iterator: Iterator, prefix_iterator: Iterator = None,
                  suffix_iterator: Iterator = None) -> None:
