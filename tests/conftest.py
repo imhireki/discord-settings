@@ -1,59 +1,70 @@
 import pytest
 
+from iter import iterable, iterator
+
 
 @pytest.fixture
 def auth_token() -> str:
     return 'eyJCI6IkpCJ9.eJzWiOiMyfQ.SfMyV_assw5c'
 
 @pytest.fixture
-def iterable_items():
-    return ["xyz", "abc"]
-
-@pytest.fixture
-def iterable_mock(mocker, iterable_items):
-    def get_request_data(value):
-        return {"test": value}
-    return mocker.Mock(items=iterable_items, get_request_data=get_request_data)
-
-@pytest.fixture
 def request_data_value():
     return '123'
 
 @pytest.fixture
+def items():
+    return ["xy", "ab"]
+
+@pytest.fixture
+def make_upper_on_collection():
+    return lambda index, collection: ''.join([
+        item.upper() if index == item_index else item
+        for item_index, item in enumerate(collection)
+    ])
+
+@pytest.fixture
 def iterator_mock(iterable_mock):
-    class Iterator:
-        def __init__(self) -> None:
-            self.iterable = iterable_mock
-            self.collection = self.set_collection(self.iterable)
-            self.max_collection_index: int = len(self.collection) - 1
+    class Iterator(iterator.IUnlimitedItems):
+        """[abc, xyz]  =  abc -> xyz"""
+        def _get_collection_item(self) -> str:
+            return self._collection[self._collection_index]
 
-        def set_collection(self, iterable):
-            return iterable if isinstance(iterable, (list, tuple)) else iterable.items
+        def _set_next_collection_index(self) -> None:
+            if not hasattr(self, '_collection_index'):
+                return self._reset_collection_index()
+            self._collection_index += 1
 
-        def get_request_data(self, value: str) -> dict[str, str]:
-            return self.iterable.get_request_data(value)
+        def _reset_collection_index(self) -> None:
+            self._collection_index = 0
+    return Iterator(iterable_mock)
 
-        def indexes_in_collection_range(self, index: int, max_index: int) -> bool:
-            return True if 0 <= index <= max_index else False
+@pytest.fixture
+def make_iterator():
+    def _make_iterator(iterable):
+        class Iterator(iterator.IUnlimitedItems):
+            """[abc, xyz]  =  abc -> xyz"""
+            def _get_collection_item(self) -> str:
+                return self._collection[self._collection_index]
 
-        def __next__(self) -> str:
-            self.set_next_collection_index()
+            def _set_next_collection_index(self) -> None:
+                if not hasattr(self, '_collection_index'):
+                    return self._reset_collection_index()
+                self._collection_index += 1
 
-            if not self.indexes_in_collection_range(self.collection_index,
-                                                    self.max_collection_index):
-                self.reset_collection_index()
+            def _reset_collection_index(self) -> None:
+                self._collection_index = 0
+        return Iterator(iterable)
+    return _make_iterator
 
-            return self.get_collection_item()
+@pytest.fixture
+def make_setting_iterable():
+    def _make_setting_iterable(id: str,
+                               items: list) -> iterable.ISettingIterable:
+        class Setting(iterable.ISettingIterable):
+            def __init__(self) -> None:
+                super().__init__(items)
 
-        def get_collection_item(self) -> str:
-            return self.collection[self.collection_index]
-
-        def set_next_collection_index(self) -> None:
-            if not hasattr(self, 'collection_index'):
-                return self.reset_collection_index()
-            self.collection_index += 1
-
-        def reset_collection_index(self) -> None:
-            self.collection_index = 0
-
-    return Iterator
+            def get_request_data(self, value: str) -> dict[str, str]:
+                return {"setting": {id: value}}
+        return Setting()
+    return _make_setting_iterable

@@ -1,46 +1,36 @@
+import json
+
 import pytest
 
 from api import client
 
 
-def dict_items_in_dict(dict_a: dict, dict_b: dict):
-    match_items = dict([
-        a
-        for a in dict_a.items()
-        for b in dict_b.items()
-        if a == b
-    ])
-    return True if match_items == dict_a else False
+class TestRequestClientV9:
+    def test_get(self, mocker, auth_token):
+        request_mock = mocker.patch('requests.get')
 
-def test_client_get_request(requests_mock, auth_token):
-    request_client = client.RequestClientV9(auth_token)
+        request_client = client.RequestClientV9(auth_token)
+        response = request_client.get()
 
-    _get_request = request_client.request_manager._requests['GET']
-    get_headers = _get_request.request_method.headers
+        assert response.status_code == request_mock.return_value.status_code
+        assert response.text == request_mock.return_value.text
+        assert request_mock.call_args.args[0] == request_client._endpoint
+        assert (request_mock.call_args.kwargs['headers']
+                == request_client._request_manager._requests['GET'].
+                   _request_method._headers)
 
-    text_data = '{"test": 123}'
-    requests_mock.get(request_client.endpoint, text=text_data)
+    def test_patch(self, mocker, auth_token):
+        data = {'data': 123}
+        request_mock = mocker.patch(
+            'requests.patch',
+            return_value=mocker.Mock(text=json.dumps(data)))
 
-    response = request_client.get()
+        request_client = client.RequestClientV9(auth_token)
+        response = request_client.patch(data)
 
-    assert response.status_code == 200
-    assert response.url == request_client.endpoint
-    assert response.text == text_data
-    assert dict_items_in_dict(get_headers, response.request.headers)
-
-def test_client_patch_request(requests_mock, auth_token):
-    request_client = client.RequestClientV9(auth_token)
-
-    _patch_request = request_client.request_manager._requests['PATCH']
-    patch_headers = _patch_request.request_method.headers
-
-    data = {'data': 123}
-    requests_mock.patch(request_client.endpoint, json=data)
-
-    response = request_client.patch(data)
-
-    assert response.status_code == 200
-    assert response.url == request_client.endpoint
-    assert eval(response.text) == data
-    assert dict_items_in_dict(patch_headers, response.request.headers)
-
+        assert response.status_code == request_mock.return_value.status_code
+        assert data == json.loads(response.text)
+        assert request_mock.call_args.args[0] == request_client._endpoint
+        assert (request_mock.call_args.kwargs['headers']
+                == request_client._request_manager._requests['PATCH'].
+                   _request_method._headers)

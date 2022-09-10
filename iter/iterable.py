@@ -1,12 +1,12 @@
 from collections.abc import Iterable
-from iterators import iterator
 from abc import abstractmethod
-from typing import Union
+
+from iter import iterator
 
 
 class ISettingIterable(Iterable):
-    def __init__(self, items: Union[str, tuple, list]) -> None:
-        self.items: Union[tuple, list] = items
+    def __init__(self, items: tuple | list) -> None:
+        self.items: tuple | list = items
 
     @abstractmethod
     def get_request_data(value: str) -> dict[str, str]: pass
@@ -32,7 +32,7 @@ class Text(ISettingIterable):
 
 
 class Status(ISettingIterable):
-    def __init__(self, items: Union[tuple, list] = []) -> None:
+    def __init__(self, items: tuple | list = []) -> None:
         super().__init__(items or ['online', 'idle', 'dnd'])
 
     def get_request_data(self, value: str) -> dict[str, str]:

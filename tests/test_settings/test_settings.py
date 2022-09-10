@@ -1,52 +1,29 @@
-from copy import deepcopy
 import json
 
-import pytest
-
-from iterables import iterable
 from settings import settings
 
 
 def test_local_settings(mocker):
     remote_settings = '{"status": "dnd", "custom_status": {"text": "xD"}}'
     new_settings = {"status": "online", "a": "1"}
-
-    remote_settings_updated = deepcopy(json.loads(remote_settings))
-    remote_settings_updated.update(new_settings)
-
-    response_mock = mocker.Mock(text=remote_settings)
-    request_client_mock = mocker.Mock(get=mocker.Mock(return_value=response_mock))
+    remote_settings_updated = {**json.loads(remote_settings), **new_settings}
+    request_client_mock = mocker.Mock(get=mocker.Mock(
+        return_value=mocker.Mock(text=remote_settings)))
 
     local_settings = settings.LocalSettings(request_client_mock)
     local_settings.update(new_settings)
 
     assert local_settings._settings == remote_settings_updated
 
-def test_settings_buffer(mocker):
-    class SettingA(iterable.ISettingIterable):
-        def __init__(self) -> None:
-            super().__init__(["1", "2", "3"])
+def test_settings_buffer(mocker, make_setting_iterable):
+    setting_a = make_setting_iterable(id='a', items=['1', '2'])
+    setting_b = make_setting_iterable(id='b', items=['x', 'y'])
+    expected_buffer_1 = {"setting": {"a": "1", "b": "x"}}
+    expected_buffer_2 = {"setting": {"a": "2", "b": "y"}}
 
-        def get_request_data(self, value: str) -> dict[str, str]:
-            return {"setting": {"a": value}}
+    settings_buffer = settings.SettingsBuffer(iter(setting_a), iter(setting_b))
+    buffer_1 = settings_buffer.get_updated_buffer()
+    buffer_2 = settings_buffer.get_updated_buffer()
 
-
-    class SettingB(iterable.ISettingIterable):
-        def __init__(self) -> None:
-            super().__init__(["x", "y", "z"])
-
-        def get_request_data(self, value: str) -> dict[str, str]:
-            return {"setting": {"b": value}}
-
-    setting_a = SettingA()
-    iter_setting_a = iter(setting_a)
-
-    setting_b = SettingB()
-    iter_setting_b = iter(setting_b)
-
-    settings_buffer = settings.SettingsBuffer(iter_setting_a, iter_setting_b)
-
-    for item_a, item_b in zip(setting_a.items, setting_b.items):
-        assert settings_buffer.get_updated_buffer() == {
-            "setting": {"a": item_a, "b": item_b}
-        }
+    assert buffer_1 == expected_buffer_1
+    assert buffer_2 == expected_buffer_2
