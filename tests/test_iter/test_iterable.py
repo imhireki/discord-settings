@@ -44,7 +44,7 @@ def test_text():
     assert request_data_1 == {"custom_status": {"text": text_list[1]}}
     assert request_data_2 == {"custom_status": {"text": text_list[2]}}
 
-def test_text():
+def test_status():
     status = iterable.Status()
 
     request_data_0 = status.get_request_data(status.items[0])

@@ -9,7 +9,7 @@ class ISettingIterable(Iterable):
         self.items: tuple | list = items
 
     @abstractmethod
-    def get_request_data(value: str) -> dict[str, str]: pass
+    def get_request_data(self, value: str) -> dict: pass
 
     def __iter__(self) -> iterator.Increase:
         return self.increase()
@@ -22,12 +22,12 @@ class ISettingIterable(Iterable):
 
 
 class EmojiName(ISettingIterable):
-    def get_request_data(self, value: str) -> dict[str, str]:
+    def get_request_data(self, value: str) -> dict:
         return {'custom_status': {'emoji_name': value}}
 
 
 class Text(ISettingIterable):
-    def get_request_data(self, value: str) -> dict[str, str]:
+    def get_request_data(self, value: str) -> dict:
         return {'custom_status': {'text': value}}
 
 
@@ -35,5 +35,5 @@ class Status(ISettingIterable):
     def __init__(self, items: tuple | list = []) -> None:
         super().__init__(items or ['online', 'idle', 'dnd'])
 
-    def get_request_data(self, value: str) -> dict[str, str]:
+    def get_request_data(self, value: str) -> dict:
         return {'status': value}

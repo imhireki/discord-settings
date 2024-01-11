@@ -1,16 +1,16 @@
 import json
 
-from settings import settings
+import settings
 
 
-def test_local_settings(mocker):
+def test_discord_settings(mocker):
     remote_settings = '{"status": "dnd", "custom_status": {"text": "xD"}}'
     new_settings = {"status": "online", "a": "1"}
     remote_settings_updated = {**json.loads(remote_settings), **new_settings}
     request_client_mock = mocker.Mock(get=mocker.Mock(
         return_value=mocker.Mock(text=remote_settings)))
 
-    local_settings = settings.LocalSettings(request_client_mock)
+    local_settings = settings.DiscordSettings(request_client_mock)
     local_settings.update(new_settings)
 
     assert local_settings._settings == remote_settings_updated

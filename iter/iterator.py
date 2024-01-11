@@ -1,10 +1,14 @@
 from typing import Iterable, Iterator
 from abc import ABC, abstractmethod
+from typing import Optional
 
 
 class ISettingIterator(ABC):
     _max_collection_index: int
     _collection_index: int
+    iterable: Iterable
+
+    def __iter__(self): return self
 
     @abstractmethod
     def __next__(self) -> str: pass
@@ -28,12 +32,12 @@ class IUnlimitedItems(ISettingIterator):
         self._collection: tuple | list = self._set_collection(self.iterable)
         self._max_collection_index = len(self._collection) - 1
 
-    def _set_collection(self, iterable: Iterable) -> str | tuple | list:
+    def _set_collection(self, iterable: Iterable) -> tuple | list:
         is_setting_iterable = not isinstance(iterable, (list, tuple))
-        return iterable.items if is_setting_iterable else iterable
+        return iterable.items if is_setting_iterable else iterable  # type: ignore
 
     def get_request_data(self, value: str) -> dict[str, str]:
-       return self.iterable.get_request_data(value)
+       return self.iterable.get_request_data(value)  # type: ignore
 
     def __next__(self) -> str:
         self._set_next_collection_index()
@@ -165,13 +169,14 @@ class UpperIndexItem(IUnlimitedItemsDecorator):
 
 
 class IteratorManager:
-    def __init__(self, iterator: Iterator,
-                 prefix_iterator: Iterator = None,
-                 suffix_iterator: Iterator = None) -> None:
-        self.iterator: Iterator = iterator
+    def __init__(self, iterator: ISettingIterator,
+                 prefix_iterator: Optional[Iterator] = None,
+                 suffix_iterator: Optional[Iterator] = None) -> None:
+
+        self.iterator: ISettingIterator = iterator
         self.iterable: Iterable = iterator.iterable
-        self._prefix_iterator: Iterator = prefix_iterator
-        self._suffix_iterator: Iterator = suffix_iterator
+        self._prefix_iterator: Iterator|None = prefix_iterator
+        self._suffix_iterator: Iterator|None = suffix_iterator
 
     def _get_iterators_result(self) -> list | tuple:
         return [

@@ -31,11 +31,15 @@ class IRequest(ABC):
 
 
 class PatchRequest(IRequest):
+    _request_method: Patch
+
     def perform_request(self, *args, **kwargs) -> requests.Response:
         return self._request_method.patch(*args, **kwargs)
 
 
 class GetRequest(IRequest):
+    _request_method: Get
+
     def perform_request(self, *args, **kwargs) -> requests.Response:
         return self._request_method.get(*args, **kwargs)
 

@@ -64,7 +64,7 @@ def make_setting_iterable():
             def __init__(self) -> None:
                 super().__init__(items)
 
-            def get_request_data(self, value: str) -> dict[str, str]:
+            def get_request_data(self, value: str) -> dict:
                 return {"setting": {id: value}}
         return Setting()
     return _make_setting_iterable
